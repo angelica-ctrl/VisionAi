@@ -1,29 +1,7 @@
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import {
-    ActivityIndicator,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
-import { analyzeImage } from "../lib/gemini";
-
-const ANALYSIS_PROMPT = `
-Analyze this image. Identify:
-1. Objects - list the distinct physical objects you see
-2. Context - briefly describe the setting or scene
-3. Activities - what activity appears to be happening, if any
-4. Recommendations - one practical suggestion based on the scene
-
-Respond ONLY with valid JSON in this exact shape, no extra text:
-{
-  "objects": ["...", "..."],
-  "context": "...",
-  "activities": "...",
-  "recommendations": "..."
-}
-`;
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ANALYSIS_PROMPT, analyzeImage } from "../lib/gemini";
 
 export default function ResultScreen() {
   const { base64Image } = useLocalSearchParams();
@@ -40,13 +18,14 @@ export default function ResultScreen() {
     setError(null);
     try {
       const result = await analyzeImage(base64Image, ANALYSIS_PROMPT);
+      console.log("FULL GEMINI RESPONSE:", JSON.stringify(result));
       const textPart = result?.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!textPart) throw new Error("Empty response from Gemini");
 
-      // strip markdown fences if Gemini adds them
       const cleaned = textPart.replace(/```json|```/g, "").trim();
       setAnalysis(JSON.parse(cleaned));
     } catch (err) {
+      console.log("Analysis error:", err);
       setError("Could not analyze this image. Please try again.");
     } finally {
       setLoading(false);
@@ -71,7 +50,7 @@ export default function ResultScreen() {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <Text style={styles.sectionTitle}>Objects</Text>
       {analysis.objects.map((obj, i) => (
         <Text key={i} style={styles.listItem}>
@@ -87,7 +66,7 @@ export default function ResultScreen() {
 
       <Text style={styles.sectionTitle}>Recommendations</Text>
       <Text style={styles.bodyText}>{analysis.recommendations}</Text>
-    </ScrollView>
+    </View>
   );
 }
 
