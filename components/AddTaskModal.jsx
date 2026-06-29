@@ -22,7 +22,7 @@ export default function AddTaskModal({ visible, onClose, onSubmit }) {
     <Modal
       visible={visible}
       animationType="slide"
-      transparent={true}
+      transparent
       onRequestClose={onClose}
     >
       <Pressable style={styles.backdrop} onPress={onClose}>
@@ -32,9 +32,8 @@ export default function AddTaskModal({ visible, onClose, onSubmit }) {
             placeholder="Enter Task"
             value={text}
             onChangeText={setText}
-            autoFocus={true}
+            autoFocus
           />
-
           <View style={styles.buttonRow}>
             <TouchableOpacity onPress={onClose}>
               <Text style={styles.cancelText}>Cancel</Text>
@@ -64,13 +63,8 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 16,
   },
-  buttonRow: { flexDirection: "row", justifyContent: "flex-end" },
-  cancelText: {
-    color: "#5A6472",
-    fontWeight: "bold",
-    paddingVertical: 10,
-    marginRight: 12,
-  },
+  buttonRow: { flexDirection: "row", justifyContent: "flex-end", gap: 16 },
+  cancelText: { color: "#5A6472", fontWeight: "bold", paddingVertical: 10 },
   addButton: {
     backgroundColor: "#2E5BBA",
     borderRadius: 8,
